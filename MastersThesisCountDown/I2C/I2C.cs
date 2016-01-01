@@ -37,15 +37,18 @@ namespace MastersThesisCountDown.I2C
             }
         }
 
-        protected void Read(params byte[] buffer)
+        protected byte[] Read(int length)
         {
+            var buffer = new byte[length];
             var transactions = new I2CDevice.I2CReadTransaction[] { I2CDevice.CreateReadTransaction(buffer) };
             var resultLength = device.Execute(transactions, timeout);
 
-            if (resultLength != buffer.Length)
+            if (resultLength != length)
             {
                 throw new Exception("Could not read from device.");
             }
+
+            return buffer;
         }
 
         protected void WriteToRegister(byte register, byte value)
@@ -55,10 +58,9 @@ namespace MastersThesisCountDown.I2C
 
         protected byte[] ReadFromRegister(byte register, int length)
         {
-            var buffer = new byte[length];
             Write(register);
-            Read(buffer);
-            return buffer;
+            var data = Read(length);
+            return data;
         }
 
         public void Dispose()

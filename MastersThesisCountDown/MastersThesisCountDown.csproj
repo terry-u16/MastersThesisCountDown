@@ -32,6 +32,7 @@
   </PropertyGroup>
   <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
   <ItemGroup>
+    <Compile Include="I2C\RX8025NB.cs" />
     <Compile Include="I2C\I2C.cs" />
     <Compile Include="I2C\KanaLCD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
