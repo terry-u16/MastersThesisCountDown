@@ -7,6 +7,13 @@ namespace MastersThesisCountDown
 {
     public class NtpClient
     {
+        public int TimeZoneOffset { get; }
+
+        public NtpClient(int timeZone)
+        {
+            TimeZoneOffset = timeZone;
+        }
+
         public DateTime GetNtpTime(string address, int timeout = 10000)
         {
             return GetNtpTime(Dns.GetHostEntry(address).AddressList[0], timeout);
@@ -32,6 +39,28 @@ namespace MastersThesisCountDown
                 socket.Close();
             }
 
+            const int offset = 40;
+            ulong intPart = 0;
+            ulong fractPart = 0;
+
+            for (int i = 0; i <= 3; i++)
+            {
+                intPart = (intPart << 8) | ntpData[offset + i];
+            }
+
+            for (int i = 4; i <= 7; i++)
+            {
+                fractPart = (fractPart << 8) | ntpData[offset + i];
+            }
+
+            ulong milliseconds = intPart * 1000 + (fractPart * 1000) / 0x100000000L;
+            var timeSpan = TimeSpan.FromTicks((long)milliseconds * TimeSpan.TicksPerMillisecond);
+            var universalDateTime = new DateTime(1900, 1, 1) + timeSpan;
+
+            var offsetAmount = new TimeSpan(TimeZoneOffset, 0, 0);
+            var networkDateTime = (universalDateTime + offsetAmount);
+
+            return networkDateTime;
         }
     }
 }

@@ -168,7 +168,7 @@ namespace MastersThesisCountDown.I2C
         {
             if (column >= columnCount || row >= rowCount)
             {
-                throw new ArgumentOutOfRangeException($"行・列の指定が不正です。行は0～{rowCount}、列は0～{columnCount}の間でなければなりません。");
+                throw new ArgumentOutOfRangeException($"行・列の指定が不正です。行は0～" + rowCount.ToString() + "、列は0～" + columnCount.ToString() + "の間でなければなりません。");
             }
 
             Write((byte)Command.Locate, row, column);
