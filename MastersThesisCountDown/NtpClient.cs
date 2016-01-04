@@ -14,12 +14,12 @@ namespace MastersThesisCountDown
             TimeZoneOffset = timeZone;
         }
 
-        public DateTime GetNtpTime(string address, int timeout = 10000)
+        public DateTime GetNtpTime(string address, int timeout = 5000)
         {
             return GetNtpTime(Dns.GetHostEntry(address).AddressList[0], timeout);
         }
 
-        public DateTime GetNtpTime(IPAddress address, int timeout = 10000)
+        public DateTime GetNtpTime(IPAddress address, int timeout = 5000)
         {
             var endPoint = new IPEndPoint(address, 123);
 
