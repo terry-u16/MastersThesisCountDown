@@ -77,6 +77,7 @@ namespace MastersThesisCountDown.I2C
 
         public void Dispose()
         {
+            Device.Dispose();
             GC.SuppressFinalize(this);
         }
     }

@@ -123,15 +123,14 @@ namespace MastersThesisCountDown.I2C
 
         public KanaLCD(ushort address, int rowCount, int columnCount) : base(address, 100, 500)
         {
-            Initialize(rowCount, columnCount);
+            this.columnCount = columnCount;
+            this.rowCount = rowCount;
         }
 
 
-        public void Initialize(int rowCount, int columnCount, int waitTime = 80)
+        public void Initialize(int waitTime = 80)
         {
             var screenMode = GetScreenMode(rowCount, columnCount);
-            this.columnCount = columnCount;
-            this.rowCount = rowCount;
 
             Thread.Sleep(waitTime);
 
@@ -205,7 +204,7 @@ namespace MastersThesisCountDown.I2C
                 Write(buffer);
                 sentBytes += messageLength;
                 Thread.Sleep(2);
-            } while (byteArray.Length == sentBytes);
+            } while (byteArray.Length > sentBytes);
         }
 
 

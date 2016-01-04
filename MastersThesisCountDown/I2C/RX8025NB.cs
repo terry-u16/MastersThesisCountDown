@@ -53,9 +53,11 @@ namespace MastersThesisCountDown.I2C
         private const byte HourMode24 = 0x20;
         private const byte PowerOnReset = 0x00;
 
-        private InterruptMode interruptMode = InterruptMode.Off;
-
         public RX8025NB() : base(0x32, 100, 500)
+        {
+        }
+
+        public void Initialize()
         {
             WriteToRegister(RegisterAddress.Control1, HourMode24);
             WriteToRegister(RegisterAddress.Control2, PowerOnReset);
@@ -98,7 +100,7 @@ namespace MastersThesisCountDown.I2C
         {
             get
             {
-                return interruptMode;
+                return (InterruptMode)(ReadFromRegister(RegisterAddress.Control1) & 0x07);
             }
             set
             {
