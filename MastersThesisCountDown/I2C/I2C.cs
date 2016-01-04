@@ -6,21 +6,21 @@ namespace MastersThesisCountDown.I2C
 {
     public abstract class I2C : IDisposable
     {
-        private I2CDevice device;
-        private int timeout;
+        protected I2CDevice Device { get; }
+        protected int Timeout { get; }
         public ushort Address { get; }
 
         public I2C(ushort address, int clockRate, int timeout)
         {
             this.Address = address;
-            this.timeout = timeout;
-            this.device = new I2CDevice(new I2CDevice.Configuration(address, clockRate));
+            this.Timeout = timeout;
+            this.Device = new I2CDevice(new I2CDevice.Configuration(address, clockRate));
         }
 
         protected void Write(params byte[] buffer)
         {
             var transactions = new I2CDevice.I2CWriteTransaction[] { I2CDevice.CreateWriteTransaction(buffer) };
-            var resultLength = device.Execute(transactions, timeout);
+            var resultLength = Device.Execute(transactions, Timeout);
 
             while (resultLength < buffer.Length)
             {
@@ -28,7 +28,7 @@ namespace MastersThesisCountDown.I2C
                 Array.Copy(buffer, resultLength, extendedBuffer, 0, extendedBuffer.Length);
 
                 transactions = new I2CDevice.I2CWriteTransaction[] { I2CDevice.CreateWriteTransaction(extendedBuffer) };
-                resultLength += device.Execute(transactions, timeout);
+                resultLength += Device.Execute(transactions, Timeout);
             }
 
             if (resultLength != buffer.Length)
@@ -41,7 +41,7 @@ namespace MastersThesisCountDown.I2C
         {
             var buffer = new byte[length];
             var transactions = new I2CDevice.I2CReadTransaction[] { I2CDevice.CreateReadTransaction(buffer) };
-            var resultLength = device.Execute(transactions, timeout);
+            var resultLength = Device.Execute(transactions, Timeout);
 
             if (resultLength != length)
             {
@@ -58,9 +58,21 @@ namespace MastersThesisCountDown.I2C
 
         protected byte[] ReadFromRegister(byte register, int length)
         {
-            Write(register);
-            var data = Read(length);
-            return data;
+            var buffer = new byte[length];
+            var transactions = new I2CDevice.I2CTransaction[]
+            {
+                I2CDevice.CreateWriteTransaction(new byte[] { register }),
+                I2CDevice.CreateReadTransaction(buffer)
+            };
+
+            var resultLength = Device.Execute(transactions, Timeout);
+
+            if (resultLength != (length + 1))
+            {
+                throw new Exception("Could not read from device.");
+            }
+
+            return buffer;
         }
 
         public void Dispose()

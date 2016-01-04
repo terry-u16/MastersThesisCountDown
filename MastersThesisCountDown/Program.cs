@@ -14,7 +14,11 @@ namespace MastersThesisCountDown
     {
         public static void Main()
         {
+            var clock = new RX8025NB();
             var lcd = new KanaLCD(0x38, 2, 40);
+
+
+            clock.Interrupt = RX8025NB.InterruptMode.Pulse1Hz;
 
             while (true)
             {
@@ -26,5 +30,12 @@ namespace MastersThesisCountDown
             }
         }
 
+        private DateTime GetTimeViaHttp(TimeSpan timeout)
+        {
+            // Wifi接続待ち
+            while (IPAddress.GetDefaultLocalAddress() == IPAddress.Any) ;
+
+            var client = HttpWebRequest.Create()
+        }
     }
 }
